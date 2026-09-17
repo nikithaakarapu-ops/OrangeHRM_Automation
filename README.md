@@ -31,7 +31,7 @@ npm install
 ```
 
 ```bash
-npx playwright install
+npx playwright install chromium
 ```
 
 Create a `.env` file in the project root:
