@@ -1,0 +1,23 @@
+{
+  "name": "orangehrm-advanced-framework",
+  "version": "1.0.0",
+  "description": "Playwright + TypeScript UI and API tests for OrangeHRM Employee Lifecycle",
+  "private": true,
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed --project=chromium",
+    "report": "playwright show-report",
+    "typecheck": "tsc --noEmit"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "@types/moment": "^2.11.29",
+    "@types/node": "^22.20.3",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "moment": "^2.31.0"
+  }
+}

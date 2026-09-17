@@ -1,0 +1,18 @@
+[
+  {
+    "testName": "Employee Information Data set - ",
+    "firstName": "Aarav",
+    "lastName": "Automation",
+    "profilePicture": "data/images/profile-1.png",
+    "jobTitle": "QA Lead",
+    "employmentStatus": "Full-Time Permanent"
+  },
+  {
+    "testName": "Employee Information Data set - ",
+    "firstName": "Meera",
+    "lastName": "Playwright",
+    "profilePicture": "data/images/profile-2.png",
+    "jobTitle": "Software Engineer",
+    "employmentStatus": "Full-Time Probation"
+  }
+]
