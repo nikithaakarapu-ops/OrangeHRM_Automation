@@ -3,22 +3,41 @@ import { test, expect } from "../fixtures/base-test";
 import { verifyEqual, verifyStatus } from "../utils/assertions";
 import { DateUtils } from "../utils/date-utils";
 import employees from "../data/employee-data.json";
-import { STATUS_CODES } from "../config/constants";
+import { STATUS_CODES, TAGS } from "../config/constants";
+import { randomUUID } from "crypto";
 
 test.describe("Employee Lifecycle Management", () => {
+  let createdEmployeeId: string | undefined;
+
+  test.afterEach(async ({ orangeHrmApi }) => {
+    if (createdEmployeeId) {
+      await orangeHrmApi.deleteEmployeeById(createdEmployeeId);
+      createdEmployeeId = undefined;
+    }
+  });
+
   employees.forEach((data, index) => {
     const uniqueSuffix = DateUtils.getCurrentTimeStamp("DDMMYYYYHHmmss");
-    const isLastEmployee = index === employees.length - 1;
+
     const employee = {
       firstName: data.firstName + uniqueSuffix,
       lastName: data.lastName + uniqueSuffix,
-      employeeId: `E${index}${Date.now().toString().slice(-8)}`,
+      employeeId: `E${randomUUID().replace(/-/g, '').slice(0, 8)}`,
       profilePicture: path.resolve(data.profilePicture),
+      loginDetails: data.loginDetails
+    ? {
+        username: `${data.firstName.toLowerCase()}.${uniqueSuffix}`,
+        password: data.loginPassword,
+        status: data.loginStatus as "Enabled" | "Disabled",
+      }
+    : undefined,
     };
 
-    test(data.testName + index, async ({page, dashboardPage, addEmployeePage,
-        pimPage, orangeHrmApi, loginPage}) => {
+
+    test(data.testName + index, { tag: [TAGS.REGRESSION] }, async ({page, dashboardPage, addEmployeePage,
+        pimPage, orangeHrmApi}) => {
         let empNumber = 0;
+        createdEmployeeId = employee.employeeId;
 
         await test.step("1. Open the dashboard as a logged-in user", async () => {
           await dashboardPage.goto();
@@ -26,7 +45,7 @@ test.describe("Employee Lifecycle Management", () => {
           await expect(dashboardPage.dashboardHeading,"Dashboard heading should be visible",).toBeVisible();
         });
 
-        await test.step("2. Add a new employee", async () => {
+        await test.step("2. Add a new employee with login details", async () => {
           await dashboardPage.openMenu("PIM");
           await pimPage.navigateToTab("Add Employee");
           await addEmployeePage.addEmployee(employee);
@@ -48,6 +67,17 @@ test.describe("Employee Lifecycle Management", () => {
           verifyEqual(employeeBody.data[0].lastName,employee.lastName, "Last name is mismatching in the API response");
           verifyEqual(employeeBody.data[0].firstName,employee.firstName,"First name is mismatching in the API response");
           verifyEqual(employeeBody.data[0].employeeId,employee.employeeId,"Employee Id is mismatching in the API response");
+          
+          if(employee.loginDetails) {
+          const userResponse = await orangeHrmApi.getSystemUsers(employee.loginDetails.username);
+          verifyStatus(userResponse.status(),STATUS_CODES.OK,"Status code is mismatching");
+          const userBody = await userResponse.json();
+          verifyEqual(userBody.meta.total, 1, "Login should be created for the employee");
+          verifyEqual(userBody.data[0].userRole.name, "ESS", "Login created from Add Employee should have the ESS role");
+          verifyEqual(userBody.data[0].status, employee.loginDetails.status === "Enabled", "Login status is mismatching in the API response");
+          verifyEqual(userBody.data[0].employee.empNumber, empNumber, "Login should be linked to the new employee");
+          }
+          
         });
 
         await test.step("4. Update employment status and job details", async () => {
@@ -87,15 +117,11 @@ test.describe("Employee Lifecycle Management", () => {
           const employeeDeleteBody = await employeeDeleteResponse.json();
           verifyStatus(employeeDeleteResponse.status(),STATUS_CODES.OK,"Status code is mismatching");
           verifyEqual(employeeDeleteBody.meta.total,0,"Employee not deleted correctly");
+          if(employee.loginDetails) {
+          const userDeleteBody = await (await orangeHrmApi.getSystemUsers(employee.loginDetails.username)).json();
+          verifyEqual(userDeleteBody.meta.total, 0, "Login should be removed with the employee");
+          }
         });
-
-        if (isLastEmployee) {
-          await test.step("8. Logout after the final data set", async () => {
-            await dashboardPage.logout();
-            await expect(page, "Should be redirected to login page").toHaveURL(/auth\/login/,);
-            await expect(loginPage.loginButton,"Login button should be visible").toBeVisible();
-          });
-        }
       },
     );
   });

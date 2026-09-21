@@ -5,7 +5,10 @@
     "lastName": "Automation",
     "profilePicture": "data/images/profile-1.png",
     "jobTitle": "QA Lead",
-    "employmentStatus": "Full-Time Permanent"
+    "employmentStatus": "Full-Time Permanent",
+    "loginPassword": "Automation@123",
+    "loginStatus": "Enabled",
+    "loginDetails": true
   },
   {
     "testName": "Employee Information Data set - ",
@@ -13,6 +16,9 @@
     "lastName": "Playwright",
     "profilePicture": "data/images/profile-2.png",
     "jobTitle": "Software Engineer",
-    "employmentStatus": "Full-Time Probation"
+    "employmentStatus": "Full-Time Probation",
+    "loginPassword": "Automation@123",
+    "loginStatus": "Disabled",
+    "loginDetails": false
   }
 ]
