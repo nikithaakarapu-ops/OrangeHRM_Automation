@@ -105,6 +105,10 @@ export class BasePage {
     await expect(locator, message).toHaveText(text);
   }
 
+  async expectTextArray(locator: Locator, text: string[] | RegExp, message?: string) {
+    await expect(locator, message).toHaveText(text);
+  }
+
   async expectContainsText(locator: Locator, text: string | RegExp, message?: string) {
     await expect(locator, message).toContainText(text);
   }
@@ -124,5 +128,4 @@ export class BasePage {
   async expectUrl(url: string | RegExp, message?: string) {
     await expect(this.page, message).toHaveURL(url);
   }
-
 }

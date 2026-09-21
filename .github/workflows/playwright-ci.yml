@@ -6,11 +6,26 @@ on:
   pull_request:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      environment:
+        description: Environment to test
+        type: choice
+        options: [qa, prod]
+        default: qa
 
 jobs:
   test:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    # Credentials come from the GitHub environment of the same name (Settings > Environments).
+    environment: ${{ inputs.environment || 'qa' }}
+    env:
+      TEST_ENV: ${{ inputs.environment || 'qa' }}
+      BASE_URL: ${{ secrets.BASE_URL }}
+      API_BASE_URI: ${{ secrets.API_BASE_URI }}
+      ORANGEHRM_USERNAME: ${{ secrets.ORANGEHRM_USERNAME }}
+      ORANGEHRM_PASSWORD: ${{ secrets.ORANGEHRM_PASSWORD }}
+      WORKERS: 2
     steps:
       - uses: actions/checkout@v4
 

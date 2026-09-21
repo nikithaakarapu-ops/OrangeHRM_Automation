@@ -3,6 +3,7 @@ import { LoginPage } from '../pages/login-page';
 import { DashboardPage } from '../pages/dashboard-page';
 import { AddEmployeePage } from '../pages/add-employee-page';
 import { PimPage } from '../pages/pim-page';
+import { AdminPage } from '../pages/admin-page';
 import { OrangeHrmApiClient } from '../api/orange-hrm-api-client';
 
 type Fixtures = {
@@ -10,6 +11,7 @@ type Fixtures = {
   dashboardPage: DashboardPage;
   addEmployeePage: AddEmployeePage;
   pimPage: PimPage;
+  adminPage: AdminPage;
   orangeHrmApi: OrangeHrmApiClient;
 };
 
@@ -18,6 +20,7 @@ export const test = base.extend<Fixtures>({
   dashboardPage: async ({ page }, use) => use(new DashboardPage(page)),
   addEmployeePage: async ({ page }, use) => use(new AddEmployeePage(page)),
   pimPage: async ({ page }, use) => use(new PimPage(page)),
+  adminPage: async ({ page }, use) => use(new AdminPage(page)),
   orangeHrmApi: async ({ page }, use) => use(new OrangeHrmApiClient(page.request)),
 });
 

@@ -6,6 +6,7 @@ export class LoginPage extends BasePage {
   readonly usernameInput = this.page.locator('input[name="username"]');
   readonly passwordInput = this.page.locator('input[name="password"]');
   readonly loginButton = this.page.getByRole('button', { name: 'Login' });
+  readonly errorAlert = this.page.locator('.oxd-alert-content-text');
 
   constructor(page: Page) {
     super(page);

@@ -5,6 +5,7 @@ export class DashboardPage extends BasePage {
   readonly dashboardHeading = this.page.getByRole('heading', { name: 'Dashboard' });
   readonly userDropdown = this.page.locator('.oxd-userdropdown-tab');
   readonly logoutMenuItem = this.page.getByRole('menuitem', { name: 'Logout' });
+  readonly mainMenuItems = this.page.locator('.oxd-main-menu-item');
 
   constructor(page: Page) {
     super(page);
